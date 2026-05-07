@@ -31,17 +31,29 @@ export default function Signup() {
 
     try {
 
-      await API.post("/auth/signup", form)
+      const res = await API.post(
+        "/auth/signup",
+        form
+      )
 
-      alert("Signup successful")
+      console.log(res.data)
+
+      alert("Signup successful!")
 
       navigate("/")
 
     } catch (err) {
 
-      console.log(err)
+      console.log(err.response)
 
-      alert("Signup failed")
+      if (err.response?.data?.message) {
+
+        alert(err.response.data.message)
+
+      } else {
+
+        alert("Server error")
+      }
 
     } finally {
 
@@ -144,7 +156,7 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-500 hover:bg-green-600 transition p-3 rounded-lg font-bold"
+            className="w-full bg-green-500 hover:bg-green-600 transition p-3 rounded-lg font-bold text-white"
           >
 
             {

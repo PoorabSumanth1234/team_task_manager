@@ -1,142 +1,209 @@
-import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import React, { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import API from "../services/api"
 
-export default function Login() {
+const Login = () => {
 
-  const navigate = useNavigate()
+    const navigate = useNavigate()
 
-  const [form, setForm] = useState({
-    email: "",
-    password: ""
-  })
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
-  const [loading, setLoading] = useState(false)
+    const handleLogin = async (e) => {
 
-  const handleChange = (e) => {
+        e.preventDefault()
 
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    })
-  }
+        try {
 
-  const handleSubmit = async (e) => {
+            const response = await API.post(
 
-    e.preventDefault()
+                "/api/auth/login",
 
-    setLoading(true)
+                {
+                    email,
+                    password
+                }
+            )
 
-    try {
+            console.log("LOGIN RESPONSE:", response.data)
 
-      const res = await API.post("/auth/login", form)
+            localStorage.setItem(
+                "token",
+                response.data.token
+            )
 
-      localStorage.setItem("token", res.data.token)
-      localStorage.setItem("role", res.data.role)
+            alert("Login successful")
 
-      alert("Login successful")
+            navigate("/dashboard")
 
-      navigate("/dashboard")
+        } catch (error) {
 
-    } catch (err) {
+            console.log("LOGIN ERROR:", error)
 
-      console.log(err)
-
-      alert("Invalid credentials")
-
-    } finally {
-
-      setLoading(false)
+            alert(
+                error.response?.data?.message ||
+                error.response?.data?.error ||
+                "Login failed"
+            )
+        }
     }
-  }
 
-  return (
+    return (
 
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+        <div
+            style={{
+                minHeight: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#020617"
+            }}
+        >
 
-      <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <div
+                style={{
+                    width: "400px",
+                    backgroundColor: "#1e293b",
+                    padding: "40px",
+                    borderRadius: "20px",
+                    color: "white"
+                }}
+            >
 
-        <div className="text-center mb-8">
+                <h1
+                    style={{
+                        textAlign: "center",
+                        marginBottom: "10px"
+                    }}
+                >
+                    Team Task Manager
+                </h1>
 
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Team Task Manager
-          </h1>
+                <p
+                    style={{
+                        textAlign: "center",
+                        marginBottom: "30px",
+                        color: "#cbd5e1"
+                    }}
+                >
+                    Manage projects and team tasks efficiently
+                </p>
 
-          <p className="text-gray-400">
-            Manage projects and team tasks efficiently
-          </p>
+                <form onSubmit={handleLogin}>
+
+                    {/* EMAIL */}
+
+                    <div
+                        style={{
+                            marginBottom: "20px"
+                        }}
+                    >
+
+                        <label>Email</label>
+
+                        <input
+                            type="email"
+                            placeholder="Enter email"
+                            value={email}
+                            onChange={(e) =>
+                                setEmail(e.target.value)
+                            }
+                            required
+                            style={inputStyle}
+                        />
+
+                    </div>
+
+                    {/* PASSWORD */}
+
+                    <div
+                        style={{
+                            marginBottom: "25px"
+                        }}
+                    >
+
+                        <label>Password</label>
+
+                        <input
+                            type="password"
+                            placeholder="Enter password"
+                            value={password}
+                            onChange={(e) =>
+                                setPassword(e.target.value)
+                            }
+                            required
+                            style={inputStyle}
+                        />
+
+                    </div>
+
+                    {/* BUTTON */}
+
+                    <button
+                        type="submit"
+                        style={{
+                            width: "100%",
+                            padding: "14px",
+                            backgroundColor: "#2563eb",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            fontWeight: "bold"
+                        }}
+                    >
+                        Login
+                    </button>
+
+                </form>
+
+                <p
+                    style={{
+                        marginTop: "25px",
+                        textAlign: "center"
+                    }}
+                >
+
+                    Don’t have an account?{" "}
+
+                    <Link
+                        to="/signup"
+                        style={{
+                            color: "#3b82f6",
+                            textDecoration: "none"
+                        }}
+                    >
+                        Signup
+                    </Link>
+
+                </p>
+
+            </div>
 
         </div>
-
-        <form onSubmit={handleSubmit}>
-
-          <div className="mb-4">
-
-            <label className="block text-gray-300 mb-2">
-              Email
-            </label>
-
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-white text-black outline-none"
-              required
-            />
-
-          </div>
-
-          <div className="mb-6">
-
-            <label className="block text-gray-300 mb-2">
-              Password
-            </label>
-
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-white text-black outline-none"
-              required
-            />
-
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 transition p-3 rounded-lg font-bold"
-          >
-
-            {
-              loading
-              ? "Logging in..."
-              : "Login"
-            }
-
-          </button>
-
-        </form>
-
-        <p className="text-center text-gray-400 mt-6">
-
-          Don't have an account?
-
-          <Link
-            to="/signup"
-            className="text-blue-400 ml-2 hover:underline"
-          >
-            Signup
-          </Link>
-
-        </p>
-
-      </div>
-
-    </div>
-  )
+    )
 }
+
+const inputStyle = {
+
+    width: "100%",
+
+    padding: "12px",
+
+    marginTop: "8px",
+
+    borderRadius: "10px",
+
+    border: "none",
+
+    outline: "none",
+
+    backgroundColor: "#334155",
+
+    color: "white",
+
+    fontSize: "15px"
+}
+
+export default Login
