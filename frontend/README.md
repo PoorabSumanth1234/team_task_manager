@@ -8,10 +8,10 @@ The application allows teams to manage projects, assign tasks, track progress, a
 ## 🌐 Live Demo
 
 ### Frontend
-(Add your Vercel URL here)
+(https://team-task-manager-mrjj2vzok-poorabsumanth1234s-projects.vercel.app/)
 
 ### Backend API
-(Add your Railway URL here)
+http://teamtaskmanager-production-f9da.up.railway.app
 
 ---
 
@@ -146,13 +146,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 5️⃣ Create `.env`
-
-```env
-MONGO_URI=your_mongodb_uri
-JWT_SECRET_KEY=your_secret_key
-```
-
 ## 6️⃣ Run backend
 
 ```bash
@@ -263,16 +256,12 @@ PUT /api/tasks/:id
 
 ---
 
-# 📸 Demo Video
 
-(Add your demo video link here)
 
 ---
 
 # 👨‍💻 Author
-
-Sam
-
+Poorab
 ---
 
 # 📄 License
