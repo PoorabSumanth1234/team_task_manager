@@ -2,7 +2,7 @@ import axios from "axios"
 
 const API = axios.create({
 
-    baseURL: "http://127.0.0.1:5000",
+    baseURL: "http://teamtaskmanager-production-f9da.up.railway.app",
 
     headers: {
         "Content-Type": "application/json"
