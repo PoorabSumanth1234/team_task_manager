@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const API = axios.create({
-    baseURL: "https://teamtaskmanager-production-3815.up.railway.app",
+    baseURL: "https://teamtaskmanager-production-6675.up.railway.app/api",
     headers: {
         "Content-Type": "application/json"
     }

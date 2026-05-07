@@ -1,55 +1,45 @@
 from flask import Blueprint, request, jsonify, current_app
-from flask_jwt_extended import (
-    jwt_required,
-    get_jwt_identity,
-    get_jwt
-)
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from datetime import datetime
 
-project_bp = Blueprint("projects", __name__)
+projects_bp = Blueprint("projects", __name__)
 
-# CREATE PROJECT
-@project_bp.route("/", methods=["POST"])
+@projects_bp.route("/", methods=["POST"])
 @jwt_required()
 def create_project():
 
-    # Get JWT claims
-    claims = get_jwt()
-
-    # RBAC CHECK
-    if claims["role"] != "admin":
-        return jsonify({
-            "message": "Admins only"
-        }), 403
-
     data = request.json
 
-    title = data.get("title")
+    name = data.get("name")
     description = data.get("description")
 
-    if not title or not description:
-        return jsonify({
-            "message": "All fields required"
-        }), 400
+    if not name:
+        return jsonify({"message": "Project name is required"}), 400
+
+    db = current_app.config["db"]
 
     project = {
-        "title": title,
+        "name": name,
         "description": description,
-        "createdBy": get_jwt_identity()
+        "created_by": get_jwt_identity(),
+        "created_at": datetime.utcnow()
     }
 
-    current_app.db.projects.insert_one(project)
+    result = db.projects.insert_one(project)
 
     return jsonify({
-        "message": "Project created successfully"
+        "message": "Project created successfully",
+        "project_id": str(result.inserted_id)
     }), 201
 
 
-# GET ALL PROJECTS
-@project_bp.route("/", methods=["GET"])
+@projects_bp.route("/", methods=["GET"])
 @jwt_required()
 def get_projects():
 
-    projects = list(current_app.db.projects.find())
+    db = current_app.config["db"]
+
+    projects = list(db.projects.find())
 
     for project in projects:
         project["_id"] = str(project["_id"])
